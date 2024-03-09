@@ -53,11 +53,10 @@ public class AFKSetter implements CommandExecutor, TabCompleter, Listener {
                 case "stop" -> pAFK.endAFK();
                 case "decline" -> pAFK.denyAFKRequest();
                 default -> {
-//                    if(strings[0].equals(p.getName())) {
-//                        p.sendMessage(ChatColor.RED + "...Why?");
-//                        return false;
-//                    }
-
+                    if(strings[0].equals(p.getName())) {
+                        p.sendMessage(ChatColor.RED + "...Why?");
+                        return false;
+                    }
                     if(Utils.isOnline(strings[0])) {
                         MainPluginPlayer.AFKing toAFK = Utils.getPluginPlayer(strings[0]).afking;
                         if (toAFK.isAFK) {
