@@ -1,0 +1,62 @@
+name: MainPlugin
+version: '${version}'
+author: VannerName
+main: me.vannername.mainplugin.MainPlugin
+description: The first plugin of mine, tells other players the locations of their death. And does much more nowadays, lol
+api-version: '1.20'
+commands:
+  getcoords:
+    aliases: [gc, GC]
+    description: Sends player`s current coordinates into the chat.
+  enderchest:
+    aliases: [e, у, E, У]
+    description: Opens player`s ender chest.
+  skipnight:
+    description: Skips a specified amount of nights in player`s world.
+  skipday:
+    description: Skips a specified amount of nights in player`s world.
+  afk:
+    aliases: [AFK, фал, ФАЛ]
+    description: Sets the player to AFK mode, in which he can`t move, break blocks or attack but does not take any damage.
+  servernotes:
+    aliases: [svn]
+    description: Create, view, remove and redact globally accessible notes. Supports basic text formatting and coordinates detection.
+  serverchest:
+    aliases: [svc, ымс, імс, SVC, ЫМС, ІМС]
+    description: Opens a globally accessible inventory. Useful for exchanging items.
+  navigate:
+    aliases: [nav]
+    description: Simplifies a process of getting from one place to another by indicating direction and number of blocks remaining until the end point is reached.
+  gui:
+    description: Opens MainPlugin's GUI.
+  home:
+    aliases: [рщьу, HOME, РЩЬУ]
+    description: Teleports you to your spawn location in exchange for some of your XP.
+  bug:
+    description: Use this for filing or listing bug reports, resolving them or allowing the server admin to fix the damage dealt by the bug.
+  schedulestop:
+    aliases: [sstop]
+    description: Stops the server after a specified delay.
+  moveafk:
+    description: Teleports player's AFK account to the player's location.
+  myreload:
+    description: Reloads the server without triggering notifications.
+    permission: bukkit.command.reload
+  myrestart:
+    description: Restarts the server without triggering notifications.
+    permission: bukkit.command.restart
+  info:
+    description: Sends an info message to Discord.
+    permission: op
+  sit:
+    description: Makes you imitate sitting. Press the [Exit Vehicle] key to stop sitting.
+  dissapig:
+    description: Removes all invisible pigs used for sitting. Use only in case of a bug with sitting.
+  ping:
+    description: Outputs sender's current ping. Can be used to determine ping of other players.
+  passive:
+    description: Marks/unmarks player as "passive". If a player is passive, they can no longer damage other players and be damaged by other players.
+  calculate:
+    aliases: [calc]
+    description: Calculates the result of a mathematical expression.
+
