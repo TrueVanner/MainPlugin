@@ -359,7 +359,7 @@ public class MainPluginPlayer {
             if(isNavigating) {
                 isNavigating = false;
                 saveData();
-                p.sendMessage(org.bukkit.ChatColor.AQUA + "Navigation aborted.");
+                p.sendMessage(ChatColor.AQUA + "Navigation aborted.");
                 removeCompass();
             }
         }
@@ -421,7 +421,7 @@ public class MainPluginPlayer {
             CompassMeta meta = (CompassMeta) p.getInventory().getItemInOffHand().getItemMeta();
             meta.setLodestoneTracked(false);
             meta.setLodestone(to);
-            meta.setDisplayName(org.bukkit.ChatColor.DARK_PURPLE + "(Temporary compass. Used for navigation.)");
+            meta.setDisplayName(ChatColor.DARK_PURPLE + "(Temporary compass. Used for navigation.)");
             meta.setCustomModelData(0);
             p.getInventory().getItemInOffHand().setItemMeta(meta);
         }
@@ -570,7 +570,7 @@ public class MainPluginPlayer {
         }
 
         public void unsit() {
-            if(isSitting) {
+            if(isSitting(p)) {
                 p.getVehicle().remove();
                 p.teleport(p.getLocation().add(0, 0.55, 0));
                 isSitting = false;

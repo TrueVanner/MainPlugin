@@ -7,7 +7,6 @@ import me.vannername.mainplugin.listeners.*;
 import me.vannername.mainplugin.recipes.BasicRecipes;
 import me.vannername.mainplugin.recipes.RecoloringRecipes;
 import me.vannername.mainplugin.utils.MainPluginPlayer;
-import me.vannername.mainplugin.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -70,12 +69,6 @@ public final class MainPlugin extends JavaPlugin {
         new ServerChest(this);
         new SetPassive(this);
         new Teleport(this);
-//        new ServerNotes(this);
-//        new DayNightSkipper(this);
-//        new Navigate(this);
-//        new Bug(this);
-//        new ScheduleStop(this);
-//        new Ping(this);
 
         new ImportantListeners(this);
         new DamageCanceling(this);

@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static me.vannername.mainplugin.MainPlugin.pluginPlayers;
 
@@ -33,8 +35,9 @@ public class Utils {
     }
 
     // different name to differentiate testing messages from general messages
-    public void debug(Object toSend) {
-        Utils.sendAll(toSend);
+    public static void debug(Object... toSend) {
+        for(Object o : toSend)
+            Utils.sendAll(o);
     }
 
     public static ComponentBuilder appendStyle(ComponentBuilder base, String style) {
@@ -161,7 +164,7 @@ public class Utils {
         }
         public MeetsConditions(boolean value, String expl) {
             this.value = value;
-            this.expl = org.bukkit.ChatColor.RED + expl;
+            this.expl = ChatColor.RED + expl;
         }
     }
 
@@ -170,7 +173,7 @@ public class Utils {
         if(p.getWorld() == w) {
             // i need two ifs to create two separate walls of particles
             if (Math.abs(p.getLocation().getBlockX() - border) < 30) { // check of the player is close enough
-                Utils.onlyOnce(() -> p.sendMessage(org.bukkit.ChatColor.YELLOW + "Attention: you are approaching the last loaded chunks. Loading new chunks will be much slower and will make the server run slower for all players. Proceed with caution."), 3721, plugin, 1200L);
+                Utils.onlyOnce(() -> p.sendMessage(ChatColor.YELLOW + "Attention: you are approaching the last loaded chunks. Loading new chunks will be much slower and will make the server run slower for all players. Proceed with caution."), 3721, plugin, 1200L);
                 for (int y = -2; y < 8; y++) { // create particle wall on relative y from -2 to 8
                     for (int z = -5; z <= 5; z++) { // create particle wall on relative y from -5 to 5
                         Location l = p.getLocation().add(0, y, z).getBlock().getLocation(); // get exact block location
@@ -183,7 +186,7 @@ public class Utils {
             }
 
             if (Math.abs(p.getLocation().getBlockZ() - border) < 30) {
-                Utils.onlyOnce(() -> p.sendMessage(org.bukkit.ChatColor.YELLOW + "Attention: you are approaching the last loaded chunks. Loading new chunks will be much slower and will make the server run slower for all players. Proceed with caution."), 3721, plugin, 1200L);
+                Utils.onlyOnce(() -> p.sendMessage(ChatColor.YELLOW + "Attention: you are approaching the last loaded chunks. Loading new chunks will be much slower and will make the server run slower for all players. Proceed with caution."), 3721, plugin, 1200L);
                 for (int y = -2; y < 8; y++) {
                     for (int x = -5; x <= 5; x++) {
                         Location l = p.getLocation().add(x, y, 0).getBlock().getLocation();
@@ -195,6 +198,33 @@ public class Utils {
                 }
             }
         }
+    }
+    
+    // The server will be shut down in %()1 seconds
+
+    /**
+     * To be used in texts with complex color combinations.
+     * Inserts segments in the specified positions with a corresponding colors. Colors the entire string
+     * with the first color in the list.
+     * <p>
+     * Usage: add %[0-9]*c[1-9]* where the segments should be to insert segment at position [0-9] with color at position [1-9]
+     * <p>
+     * Example 1: ("This is a %1c2 to replace with %2c1s!", List.of(ChatColor.AQUA, ChatColor.RED, ChatColor.BLUE), "text", "colors"):
+     * returns "This is a text to replace with colors" colored aqua, where "text" is colored red and "color" is colored blue.
+     * Example 2: ("This is a simple replacement: %c", List.of(ChatColor.GREEN, ChatColor.RED), "color"):
+     * returns "This is a simple replacement: color" colored green, where "color" is colored red.
+     */
+    public static String colorSegment(String text, List<ChatColor> colors, Object... segments) {
+        Pattern pt = Pattern.compile("%([0-9])*c([1-9])*"); // %1c1 <- insert 1st segment colored with next color after primary = %c when only 1 segment and 1 color
+        Matcher matcher = pt.matcher(text);
+
+        while(matcher.find()) {
+            int posSegmentToInsert = matcher.group(1) == null ? 0 : Integer.parseInt(matcher.group(1)) - 1;
+            int posColorToInsert = matcher.group(2) == null ? 1 : Integer.parseInt(matcher.group(2));
+            text = matcher.replaceFirst(colors.get(posColorToInsert) + String.valueOf(segments[posSegmentToInsert]) + colors.get(0));
+            matcher = pt.matcher(text);
+        }
+        return colors.get(0) + text;
     }
 
     public static int levelToXP(int lvl, double exp) {

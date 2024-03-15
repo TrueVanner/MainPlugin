@@ -158,7 +158,7 @@ public class OtherListeners implements Listener {
     public void coordsInChat(AsyncPlayerChatEvent e) {
         Utils.onlyOnce(() -> {
 //            Pattern pt = Pattern.compile("(-*[0-9]+ (?:-*[0-9]+ )*-*[0-9]+)"); // detects 2-3 coordinates and no ~'s
-            Pattern pt = Pattern.compile("((?:~?-?[0-9]+|~) (?:(?:~?-?[0-9]+|~) )?(?:~?-?[0-9]+|~))"); // detects 2-3 coordinates but accepts ~'s and ~n's.
+            Pattern pt = Pattern.compile("((?:~?-?[0-9]+|~) (?:(?:~?-?[0-9]+|~) )?(?:~?-?[0-9]+|~))"); // detects 2-3 coordinates and accepts ~'s and ~n's.
             Matcher matcher = pt.matcher(e.getMessage());
             String name = Utils.getPluginPlayer(e.getPlayer()).getColoredName();
 

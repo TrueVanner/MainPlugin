@@ -50,7 +50,7 @@ public class GUI_MAIN {
         Utils.createItem(inv, Material.RED_DYE, 11, ChatColor.AQUA+"Change server color", ChatColor.RESET+"Change your color in tab list and chat messages");
         Utils.createItem(inv, Material.FIREWORK_STAR, 12, ChatColor.AQUA+"/skipnight", ChatColor.RESET+"Configure night skipping");
         Utils.createItem(inv, Material.SUNFLOWER, 13, ChatColor.AQUA+"/skipday", ChatColor.RESET+"Configure day skipping");
-        Utils.createItem(inv, Material.ENDER_CHEST, 14, ChatColor.AQUA+"/enderchest", ChatColor.RESET+"Open your ender chest (is possible)");
+        Utils.createItem(inv, Material.ENDER_CHEST, 14, ChatColor.AQUA+"/enderchest", ChatColor.RESET+"Open your ender chest (if possible)");
         Utils.createItem(inv, Material.ENDER_CHEST, 15, ChatColor.AQUA+"/serverchest", ChatColor.RESET+"Open your server chest (if possible)");
         Utils.createItem(inv, Material.COMPASS, 16, ChatColor.AQUA + "Teleport to spawn", ChatColor.RESET + "Teleport to your spawn point in exchange for XP!");
 

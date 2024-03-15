@@ -82,6 +82,12 @@ public class Bug implements CommandExecutor, TabCompleter {
                 if(commandSender instanceof ConsoleCommandSender) commandSender.sendMessage("Bug report submitted successfully.");
             }
             case "resolve" -> {
+                // lazy conditional check early on
+                if(strings[1].startsWith("\"[r]")) {
+                    commandSender.sendMessage(ChatColor.RED + "This report is already marked as resolved.");
+                    return false;
+                }
+
                 StringBuilder name = new StringBuilder();
                 if(strings[1].startsWith("\"")) {
                     for (int i = 1; i < strings.length; i++) {
@@ -190,7 +196,7 @@ public class Bug implements CommandExecutor, TabCompleter {
                 // toArray is only used because keySet has no way of getting stuff easily, but there is only 1 elem in there
                 // "" are added to be used in tab completion directly
                 .map((elem) -> "\"%s\"".formatted(elem.keySet().toArray(new String[0])[0]))
-                .filter((name) -> !name.startsWith("[r]"))
+                .filter((name) -> !name.startsWith("\"[r]"))
                 .toList();
 
         if(strings.length == 1) {

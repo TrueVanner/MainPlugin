@@ -59,4 +59,6 @@ commands:
   calculate:
     aliases: [calc]
     description: Calculates the result of a mathematical expression.
+libraries:
+  - org.mariuszgromada.math:MathParser.org-mXparser:5.2.1
 

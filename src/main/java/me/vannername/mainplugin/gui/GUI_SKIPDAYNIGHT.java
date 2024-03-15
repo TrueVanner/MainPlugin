@@ -11,14 +11,14 @@ import org.bukkit.inventory.ItemStack;
 
 public class GUI_SKIPDAYNIGHT {
     public static Inventory inv;
-    public static String inv_name;
+    public static String inv_name = ChatColor.AQUA + "Configure day skipping";
     public static int inv_rows = 9;
 
     public static void init() {
-        inv_name = ChatColor.AQUA + "Configure night skipping";
         inv = Bukkit.createInventory(null, inv_rows);
     }
     public static Inventory GUI(boolean mode) {
+        if(!mode) inv_name = ChatColor.AQUA + "Configure night skipping";
         Inventory toReturn = Bukkit.createInventory(null, inv_rows, inv_name);
         ChatColor color = mode ? ChatColor.GRAY : ChatColor.YELLOW;
         String name = Utils.timeOfDayString(mode);

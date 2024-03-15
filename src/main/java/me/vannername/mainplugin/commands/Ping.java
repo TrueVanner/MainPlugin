@@ -20,16 +20,16 @@ public class Ping implements CommandExecutor, TabCompleter {
     }
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(!(commandSender instanceof Player p)) {
-            commandSender.sendMessage(ChatColor.RED + "This command is for player usage only!");
-            return false;
-        }
-
         MainPluginPlayer toDisplay;
         if(strings.length == 1 && Utils.isOnline(strings[0])) {
             toDisplay = Utils.getPluginPlayer(strings[0]);
         } else {
-            toDisplay = Utils.getPluginPlayer(p);
+            if(commandSender instanceof Player p) {
+                toDisplay = Utils.getPluginPlayer(p);
+            } else {
+                commandSender.sendMessage(ChatColor.RED + "This command is for player usage only.");
+                return false;
+            }
         }
 
         Utils.sendAll(toDisplay.pingRecording.generatePingString());
