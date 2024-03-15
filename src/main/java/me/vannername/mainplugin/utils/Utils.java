@@ -14,10 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,10 +25,14 @@ public class Utils {
     public static final FileConfiguration config = plugin.getConfig();
 
     public static void sendAll(Object toSend) {
-        if(toSend instanceof BaseComponent[])
+        if(toSend instanceof BaseComponent[]) {
             Bukkit.spigot().broadcast((BaseComponent[]) toSend);
-        else
+        }
+        else if(toSend instanceof Object[]) {
+            Bukkit.broadcastMessage(Arrays.toString((Object[]) toSend));
+        } else {
             Bukkit.broadcastMessage(String.valueOf(toSend));
+        }
     }
 
     // different name to differentiate testing messages from general messages

@@ -152,6 +152,7 @@ public class Bug implements CommandExecutor, TabCompleter {
                     try {
                         admin.sendMessage(ChatColor.AQUA + commandSender.getName() + " requested a bug fix!");
                         Utils.setInConfig("op_time", 300);
+                        MainPlugin.shouldSaveConfig = true;
                         admin.setOp(true);
 
                     } catch (ArrayIndexOutOfBoundsException | NullPointerException ignored) {
@@ -176,6 +177,7 @@ public class Bug implements CommandExecutor, TabCompleter {
                 opTime = -69;
                 admin.setOp(false);
                 admin.sendMessage(ChatColor.RED + "You're no longer an operator.");
+                MainPlugin.shouldSaveConfig = false;
             } else {
                 opTime -= 10;
             }

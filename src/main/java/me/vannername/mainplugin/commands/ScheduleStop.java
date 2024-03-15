@@ -25,7 +25,6 @@ public class ScheduleStop implements CommandExecutor, TabCompleter {
 
     private static final int[] res = new int[]{ 0, 0, 0 }; // h-m-s
     public static int shutdown;
-    private static char mode = 0;
 
     String resText() {
         res[2] = shutdown;
@@ -75,43 +74,44 @@ public class ScheduleStop implements CommandExecutor, TabCompleter {
                     }
                 }
                 default -> {
-                    try {
-                        shutdown = Integer.parseInt(strings[0].substring(0, strings[0].length() - 1)); // number without mode
-                    } catch (NumberFormatException e) {
-                        if (strings[0].contains(":")) {
-                            if(strings[0].endsWith("t")) {
-                                commandSender.sendMessage(ChatColor.YELLOW + "t at the end is no longer needed. Operating without it.");
-                                strings[0] = strings[0].substring(0, strings[0].length() - 1);
-                            }
-                            mode = 't';
-                            String[] arr = strings[0].split(":");
-                            LocalTime toDisable = LocalTime.of(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]));
-                            shutdown = (int) (toDisable.getLong(ChronoField.SECOND_OF_DAY) - LocalTime.now().getLong(ChronoField.SECOND_OF_DAY));
+                    // modes: s = in seconds, m = minutes, h = hours, t = until a specific time in HH:MM (deprecated)
+                    String mode;
+                    // to make number checks without changing shutdown value directly if a bad input happens
+                    int shutdownCandidate;
+                    if(strings[0].contains(":")) {
+                        mode = "t";
+                        String[] timeArr = strings[0].split(":");
+                        LocalTime toDisable = LocalTime.of(Integer.parseInt(timeArr[0]), Integer.parseInt(timeArr[1]));
 
-                            if (shutdown <= 0) {
-                                if(shutdown <= -600) { // make sure that tiny past values are not accepted (likely user's mistake)
-                                    shutdown += 86400; // if the time is before shutdown, add 1 day in seconds to it for correct offset.
-                                } else {
-                                    commandSender.sendMessage(ChatColor.RED + "This time has already passed.");
-                                    return false;
-                                }
+                        shutdownCandidate = (int) (toDisable.getLong(ChronoField.SECOND_OF_DAY) - LocalTime.now().getLong(ChronoField.SECOND_OF_DAY));
+
+                        if (shutdownCandidate <= 0) {
+                            if(shutdownCandidate <= -600) { // make sure that tiny past values are not accepted (likely user's mistake)
+                                shutdownCandidate += 86400; // if the time is before shutdown, add 1 day in seconds to it for correct offset.
+                            } else {
+                                commandSender.sendMessage(ChatColor.RED + "This time has already passed.");
+                                return false;
                             }
-                        } else {
+                        }
+                    } else {
+                        try {
+                            shutdownCandidate = Integer.parseInt(strings[0].substring(0, strings[0].length() - 1)); // number without mode
+                            mode = strings[0].substring(strings[0].length() - 1);
+                        } catch (NumberFormatException e) {
                             commandSender.sendMessage(ChatColor.RED + "Bad shutdown value.");
                             commandSender.sendMessage(errorMessage);
                             return false;
                         }
                     }
-                    // modes: s = in seconds, m = minutes, h = hours, t = until a specific time in HH:MM
-                    mode = mode == 't' ? mode : strings[0].charAt(strings[0].length() - 1);
+
                     switch (mode) {
-                        case 's':
-                        case 't':
+                        case "s":
+                        case "t":
                             break;
-                        case 'h':
-                            shutdown *= 60;
-                        case 'm':
-                            shutdown *= 60;
+                        case "h":
+                            shutdownCandidate *= 60;
+                        case "m":
+                            shutdownCandidate *= 60;
                             break;
                         default:
                             commandSender.sendMessage("Wrong mode");
@@ -119,11 +119,13 @@ public class ScheduleStop implements CommandExecutor, TabCompleter {
                             return false;
                     }
 
-                    if(shutdown >= 86400) {
+                    if(shutdownCandidate >= 86400) {
                         commandSender.sendMessage(ChatColor.RED + "Bad time.");
                         commandSender.sendMessage(errorMessage);
                         return false;
                     }
+
+                    shutdown = shutdownCandidate;
 
 //            if (strings[strings.length - 1].equals("full")) {
 //                try {
@@ -136,20 +138,21 @@ public class ScheduleStop implements CommandExecutor, TabCompleter {
                     String result1;
                     String result2;
 
-                    if(mode == 't') {
+                    if(mode == "t") {
                         result1 = Utils.colorSegment("Server will be shut down at %c!",
                                 List.of(ChatColor.AQUA, ChatColor.LIGHT_PURPLE), strings[0]);
                         result2 = ChatColor.AQUA + "(in %s)".formatted(resText());
                     } else {
-                        result1 = ChatColor.AQUA + "Server will be shut down in %s!".formatted(resText());
-                        result2 = "";
+                        result1 = Utils.colorSegment("Server will be shut down in %c!",
+                                List.of(ChatColor.AQUA, ChatColor.LIGHT_PURPLE), resText());
+                        result2 = ChatColor.AQUA + "(at %s)".formatted(LocalTime.now().plusSeconds(shutdown).toString().substring(0, 5));
                     }
                     plugin.getServer().getOnlinePlayers().forEach((Player p) -> p.sendTitle(result1, result2, 10, 60, 10));
-
                     if(commandSender instanceof ConsoleCommandSender) {
                         commandSender.sendMessage(Utils.colorSegment("Successfully set shutdown in %c seconds.",
                                 List.of(ChatColor.GREEN, ChatColor.YELLOW), shutdown));
                     }
+                    MainPlugin.shouldSaveConfig = true;
                 }
             }
             return true;

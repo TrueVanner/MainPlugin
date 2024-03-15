@@ -16,6 +16,7 @@ import org.bukkit.util.StringUtil;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static me.vannername.mainplugin.utils.Utils.config;
 
@@ -24,6 +25,8 @@ public class ServerNotes implements CommandExecutor, TabCompleter {
     public ServerNotes(MainPlugin plugin) {
         plugin.getCommand("servernotes").setExecutor(this);
     }
+    List<String> colors = List.of("red","green","aqua","dark_aqua","blue","dark_blue","yellow","gold","dark_purple","light_purple");
+    List<String> styles = List.of("bold","italic","underline","strikethrough");
 
     private String checkAndDetectCoordsShortcut(String text, CommandSender sender) throws Exception {
         if(text.contains("%c")) {
@@ -40,11 +43,13 @@ public class ServerNotes implements CommandExecutor, TabCompleter {
     private String checkOperation(String s, String type) throws Exception {
         switch(type) {
             case "color" -> {
-                if(s3.contains(s)) return s;
+                if(colors.contains(s)) return s;
+                else if(s.contains("none")) return "none";
                 else throw new Exception();
             }
             case "style" -> {
-                if(s4.contains(s)) return s;
+                if(styles.contains(s)) return s;
+                else if(s.contains("none")) return "none";
                 else throw new Exception();
             }
             default -> { return ""; }
@@ -149,8 +154,8 @@ public class ServerNotes implements CommandExecutor, TabCompleter {
                     ChatColor color = ChatColor.WHITE;
                     String style = "";
 
-                    if (!map.get("color").equals(".NONE")) color = ChatColor.of((String) map.get("color"));
-                    if (!map.get("style").equals(".NONE")) style = (String) map.get("style");
+                    if (!map.get("color").equals("NONE")) color = ChatColor.of((String) map.get("color"));
+                    if (!map.get("style").equals("NONE")) style = (String) map.get("style");
 
                     sendWithPossibleCoordinates(commandSender, index, (String) map.get("text"), color, style);
                     index++;
@@ -232,8 +237,6 @@ public class ServerNotes implements CommandExecutor, TabCompleter {
 
     List<String> s1 = List.of("add","redact","remove","list");
     List<String> s2;
-    List<String> s3 = List.of(".none", "red","green","aqua","dark_aqua","blue","dark_blue","yellow","gold","dark_purple","light_purple");
-    List<String> s4 = List.of("bold","italic","underline","strikethrough",/*"bold + italic","bold + underline", "italic + underline", "bold + italic + underline",*/ ".none");
     List<String> sFinal = new ArrayList<>();
 
     @Override
@@ -249,17 +252,17 @@ public class ServerNotes implements CommandExecutor, TabCompleter {
             return StringUtil.copyPartialMatches(strings[1], s2, sFinal);
         }
         if(strings.length == 2 && strings[0].equals("add")) {
-            return StringUtil.copyPartialMatches(strings[1], s3, sFinal);
+            return Stream.concat(Stream.of( ">none<"), StringUtil.copyPartialMatches(strings[1], colors, sFinal).stream()).toList();
         }
         if(strings.length == 3 && strings[0].equals("redact")) {
-            return StringUtil.copyPartialMatches(strings[2], s3, sFinal);
+            return Stream.concat(Stream.of(">none<"), StringUtil.copyPartialMatches(strings[2], colors, sFinal).stream()).toList();
     }
         // to remember: index in startsWith is different, that's why we need several ifs
         if(strings.length == 3 && strings[0].equals("add")) {
-            return StringUtil.copyPartialMatches(strings[2], s4, sFinal);
+            return Stream.concat(Stream.of(">none<"), StringUtil.copyPartialMatches(strings[2], styles, sFinal).stream()).toList();
         }
         if(strings.length == 4 && strings[0].equals("redact")) {
-            return StringUtil.copyPartialMatches(strings[3], s4, sFinal);
+            return Stream.concat(Stream.of(">none<"), StringUtil.copyPartialMatches(strings[3], styles, sFinal).stream()).toList();
         }
         return sFinal;
     }

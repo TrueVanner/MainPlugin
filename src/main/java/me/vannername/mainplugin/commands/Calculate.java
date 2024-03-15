@@ -42,7 +42,7 @@ public class Calculate implements CommandExecutor, TabCompleter {
         if (commandSender instanceof Player p) {
             if(eq.equals("77+33")) {
                 p.getServer().getOnlinePlayers().forEach(pl -> {
-                    pl.playSound(p, "custom.calc", 1, 1);
+                    pl.playSound(p, "custom.77_33", 1, 1);
                 });
             }
             if(eq.equals("9+10")) {

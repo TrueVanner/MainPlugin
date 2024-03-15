@@ -59,6 +59,9 @@ commands:
   calculate:
     aliases: [calc]
     description: Calculates the result of a mathematical expression.
+  pluginplay:
+    aliases: [pplay]
+    description: Plays a sound/cutscene that is normally only played the plugin under specific conditions
 libraries:
   - org.mariuszgromada.math:MathParser.org-mXparser:5.2.1
 

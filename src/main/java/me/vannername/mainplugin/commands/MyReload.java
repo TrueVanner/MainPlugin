@@ -27,7 +27,6 @@ public class MyReload implements CommandExecutor, Listener {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 //        plugin.getConfig().set("no_discord_notifications", true);
-        plugin.saveConfig();
         plugin.getServer().reload();
 
         return true;

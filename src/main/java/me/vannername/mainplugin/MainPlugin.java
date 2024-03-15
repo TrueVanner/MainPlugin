@@ -7,6 +7,7 @@ import me.vannername.mainplugin.listeners.*;
 import me.vannername.mainplugin.recipes.BasicRecipes;
 import me.vannername.mainplugin.recipes.RecoloringRecipes;
 import me.vannername.mainplugin.utils.MainPluginPlayer;
+import me.vannername.mainplugin.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import static me.vannername.mainplugin.utils.Utils.particleBorder;
 
 public final class MainPlugin extends JavaPlugin {
+    public static boolean shouldSaveConfig = false;
     public static HashMap<String, MainPluginPlayer> pluginPlayers = new HashMap<>();
     @Override
     public void onEnable() {
@@ -89,6 +91,7 @@ public final class MainPlugin extends JavaPlugin {
         getCommand("schedulestop").setTabCompleter(new ScheduleStop(this));
         getCommand("ping").setTabCompleter(new Ping(this));
         getCommand("calculate").setTabCompleter(new Calculate(this));
+        getCommand("pluginplay").setTabCompleter(new PluginPlay(this));
 
         GUI_MAIN.init();
 
@@ -101,8 +104,10 @@ public final class MainPlugin extends JavaPlugin {
     }
     @Override
     public void onDisable() {
-        getConfig().set("shutdown", ScheduleStop.shutdown);
-        getConfig().set("op_time", Bug.opTime);
-        saveConfig();
+        if(shouldSaveConfig) {
+            getConfig().set("shutdown", ScheduleStop.shutdown);
+            getConfig().set("op_time", Bug.opTime);
+            saveConfig();
+        }
     }
 }
