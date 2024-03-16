@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class GUI_TP {
 
     public static Inventory inv;
@@ -24,7 +26,7 @@ public class GUI_TP {
     public static Inventory GUI(Player p) {
         MainPluginPlayer mpp = Utils.getPluginPlayer(p);
         Teleport.TPData tpData = Teleport.computeTPData(p);
-        Utils.MeetsConditions result = Teleport.checkTPConditions(mpp, tpData.cost);
+        Utils.MeetsConditions result = Teleport.checkTPConditions(mpp, tpData);
         Inventory toReturn = Bukkit.createInventory(null, inv_rows, inv_name);
 
         if(!result.value) {
@@ -52,9 +54,9 @@ public class GUI_TP {
 
             int xpAfter = (int) (totalXP - tpData.cost);
             int levelAfter = Utils.XPtoLevel(xpAfter);
-            int fracToNew = (int) (((double) xpAfter / Utils.levelToXP(levelAfter + 1, 0)) * 100);
-            String afterTP = ChatColor.AQUA + "After teleporting you will have: " + ChatColor.GREEN + levelAfter +
-                    ChatColor.AQUA + " levels + " + ChatColor.GREEN + fracToNew + ChatColor.AQUA + "%";
+            int fracToNew = (int) (levelAfter == p.getLevel() ? p.getExp() * 100 : (((double) xpAfter / Utils.levelToXP(levelAfter + 1, 0)) * 100));
+            String afterTP = Utils.colorSegment("After teleporting you will have: %1c levels + %2c%",
+                    List.of(ChatColor.AQUA, ChatColor.GREEN), levelAfter, fracToNew);
 
             Utils.createItem(inv, Material.ENDER_EYE, 1, ChatColor.RESET + "Info", distanceText, xpText, costText, costEvalText, afterTP);
             Utils.createItem(inv, Material.WHITE_BED, 4, ChatColor.GREEN + "Click to teleport");

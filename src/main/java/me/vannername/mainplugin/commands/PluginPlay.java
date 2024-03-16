@@ -1,6 +1,7 @@
 package me.vannername.mainplugin.commands;
 
 import me.vannername.mainplugin.MainPlugin;
+import me.vannername.mainplugin.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -44,10 +45,11 @@ public class PluginPlay implements CommandExecutor, TabCompleter {
             } else {
                 try {
                     boolean global = strings.length >= 2 && !strings[1].equalsIgnoreCase("false");
-                    int volume = 1;
+                    float volume = 1;
                     try {
-                        volume = (int) (Integer.parseInt(strings[2]) / 100.0);
-                    } catch (NullPointerException | NumberFormatException ignored) {}
+                        volume = Integer.parseInt(strings[2]) / 100f;
+                    } catch (ArrayIndexOutOfBoundsException | NumberFormatException ignored) {}
+
                     String toPlay = idToName(strings[0]);
                     if (global) {
                         for (Player pl : plugin.getServer().getOnlinePlayers()) {
@@ -56,7 +58,7 @@ public class PluginPlay implements CommandExecutor, TabCompleter {
                     } else {
                         p.playSound(p, toPlay, volume, 1);
                     }
-                } catch (Exception e) {
+                } catch (NullPointerException e) {
                     p.sendMessage(ChatColor.RED + "Bad sound/cutscene ID");
                     return false;
                 }

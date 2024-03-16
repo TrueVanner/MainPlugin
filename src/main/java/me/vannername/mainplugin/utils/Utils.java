@@ -163,8 +163,8 @@ public class Utils {
         public MeetsConditions() {
             this.value = true;
         }
-        public MeetsConditions(boolean value, String expl) {
-            this.value = value;
+        public MeetsConditions(String expl) {
+            this.value = false;
             this.expl = ChatColor.RED + expl;
         }
     }
@@ -210,8 +210,9 @@ public class Utils {
      * <p>
      * Usage: add %[0-9]*c[1-9]* where the segments should be to insert segment at position [0-9] with color at position [1-9]
      * <p>
-     * Example 1: ("This is a %1c2 to replace with %2c1s!", List.of(ChatColor.AQUA, ChatColor.RED, ChatColor.BLUE), "text", "colors"):
+     * Example 1: ("This is a %1c1 to replace with %2c2s!", List.of(ChatColor.AQUA, ChatColor.RED, ChatColor.BLUE), "text", "colors"):
      * returns "This is a text to replace with colors" colored aqua, where "text" is colored red and "color" is colored blue.
+     * <p>
      * Example 2: ("This is a simple replacement: %c", List.of(ChatColor.GREEN, ChatColor.RED), "color"):
      * returns "This is a simple replacement: color" colored green, where "color" is colored red.
      */

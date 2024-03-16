@@ -35,6 +35,8 @@ public class DayNightSkipper implements CommandExecutor, Listener, TabCompleter 
         Bukkit.getPluginManager().registerEvents(this, plugin);
         nightsToSkip = config.getInt("nights_to_skip");
         daysToSkip = config.getInt("days_to_skip");
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this::skipDayNight, 0L, 20L);
     }
 
     private boolean _main(CommandSender commandSender, FileConfiguration config, String param, boolean mode) {
@@ -99,7 +101,7 @@ public class DayNightSkipper implements CommandExecutor, Listener, TabCompleter 
         return _main(commandSender, config, strings[0], command.getName().contains("day"));
     }
 
-    public static void skipDayNight(Plugin plugin) {
+    public void skipDayNight() {
         World w = Objects.requireNonNull(plugin.getServer().getWorld("world"));
 
         if(!plugin.getServer().getOnlinePlayers().isEmpty()) {

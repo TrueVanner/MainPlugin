@@ -45,15 +45,6 @@ public final class MainPlugin extends JavaPlugin {
             }, 0, 1L);
         }
 
-        // EVERY 1s
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            for (Player p : getServer().getOnlinePlayers()) {
-                ItemFrameChanges.tempGlowOnInvisible(p, this);
-            }
-
-            DayNightSkipper.skipDayNight(this);
-        }, 0L, 20L);
-
         // EVERY 10s
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Bug.removeOP();

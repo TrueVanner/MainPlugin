@@ -134,18 +134,6 @@ public class MainPluginPlayer {
     private String getConfigPath(String property) {
         return "Users." + p.getName() + property;
     }
-//    private String getFromConfig(String property, String type) {
-//        String path = getConfigPath(property);
-//        if(config.contains(path)) {
-//            return config.getString(path);
-//        } else throw new NullPointerException("No property found");
-//    }
-//    private boolean getFromConfig(String property, boolean type) {
-//        String path = getConfigPath(property);
-//        if(config.contains(path)) {
-//            return config.getBoolean(path);
-//        } else throw new NullPointerException("No property found");
-//    }
 
     public <T> T getFromConfig(String property, T type) {
         String path = getConfigPath(property);
@@ -167,23 +155,23 @@ public class MainPluginPlayer {
             if(force) return new MeetsConditions();
 
             if(isAFK) {
-                return new MeetsConditions(false, "You're already AFK.");
+                return new MeetsConditions("You're already AFK.");
             }
 
             if(AFKAccounts.isAFKAccount(p)) {
-                return new MeetsConditions(false, "AFK accounts can't go AFK.");
+                return new MeetsConditions("AFK accounts can't go AFK.");
             }
 
             if(isInAir()) {
-                return new MeetsConditions(false, "Can't go AFK in the air!");
+                return new MeetsConditions("Can't go AFK in the air!");
             }
 
             if (takenDamageRecently()) {
-                return new MeetsConditions(false, "Can't go AFK right after taking damage");
+                return new MeetsConditions("Can't go AFK right after taking damage");
             }
 
             if(badHostilesNearby()) {
-                return new MeetsConditions(false, "You can't rest now, there are monsters nearby!");
+                return new MeetsConditions("You can't rest now, there are monsters nearby!");
             }
 
             return new MeetsConditions();
@@ -532,10 +520,10 @@ public class MainPluginPlayer {
             if(force) return new MeetsConditions();
 
             if(isInAir()) {
-                return new MeetsConditions(false, "You can't sit in the air!");
+                return new MeetsConditions("You can't sit in the air!");
             }
             if(isSitting) {
-                return new MeetsConditions(false, "You're already sitting!");
+                return new MeetsConditions("You're already sitting!");
             }
 
             return new MeetsConditions();
@@ -594,7 +582,12 @@ public class MainPluginPlayer {
         private int protectionTaskID = -1;
         private int stopProtectionTaskID = -2; // -2 = no stop protection needed, -1 = stop protection might be needed but wasn't yet defined
 
+        private boolean forceProtectionOnJoin = false;
         public PingRecording() {
+            try {
+                forceProtectionOnJoin = getFromConfig("high_ping", true);
+            } catch (NullPointerException ignored) {}
+
             Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
                 int currentPing = p.getPing();
                 if(currentPing > 10) {
@@ -602,14 +595,18 @@ public class MainPluginPlayer {
                     pingLog.set(1, pingLog.get(0));
                     pingLog.set(0, currentPing);
 
-                    if (pingLog.stream().filter(integer -> integer > HIGH_PING_BOUNDARY).count() >= 2) {
-                        if(stopProtectionTaskID == -2) {
+                    if ((pingLog.stream().filter(integer -> integer > HIGH_PING_BOUNDARY).count() >= 2) || forceProtectionOnJoin) {
+                        if(stopProtectionTaskID == -2) { // if stop protection wasn't needed
                             protectionTaskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this::protect, 0L, 5*20L);
-                            stopProtectionTaskID = -1;
-                            // only send the message again if protection stop hasn't yet been activated
+                            stopProtectionTaskID = -1; // change stop protection to "might be needed"
                             isProtected = true;
-                            Utils.sendAll(ChatColor.YELLOW + "Warning: " + getColoredName() + ChatColor.YELLOW + "'s ping is too high! The player will receive additional resistance.");
-                            Utils.sendAll(generatePingString());
+                            Utils.setInConfig("high_ping", true);
+                            // only send the message again if protection stop hasn't yet been activated
+                            if(!forceProtectionOnJoin) {
+                                Utils.sendAll(ChatColor.YELLOW + "Warning: " + getColoredName() + ChatColor.YELLOW + "'s ping is too high! The player will receive additional resistance.");
+                                Utils.sendAll(generatePingString());
+                            }
+                            forceProtectionOnJoin = false;
                         } else if (stopProtectionTaskID == -1) {
                             Bukkit.getScheduler().cancelTask(stopProtectionTaskID);
                         }
@@ -618,7 +615,7 @@ public class MainPluginPlayer {
                     // order of ifs changed to reduce number of ops per check
                     if(stopProtectionTaskID == -1) {
                         if (pingLog.stream().allMatch(integer -> integer < HIGH_PING_BOUNDARY)) {
-                            stopProtectionTaskID = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::endProtection, 60*20L);
+                            stopProtectionTaskID = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::endProtection, 120*20L);
                         }
                     }
                 }
@@ -642,6 +639,7 @@ public class MainPluginPlayer {
 
         public void endProtection() {
             isProtected = false;
+            Utils.setInConfig("high_ping", false);
             Bukkit.getScheduler().cancelTask(protectionTaskID);
             protectionTaskID = -1;
             stopProtectionTaskID = -2;

@@ -47,16 +47,10 @@ public class Teleport implements CommandExecutor {
         }
 
         MainPluginPlayer mpp = Utils.getPluginPlayer(p);
-
-        if(mpp.isAFK()) {
-            p.sendMessage(ChatColor.RED + "You can't teleport while AFK!");
-            return false;
-        }
-
         TPData tpData = computeTPData(p);
 
         // a small work-around to prevent unreasonable teleports
-        Utils.MeetsConditions result = checkTPConditions(mpp, tpData.cost);
+        Utils.MeetsConditions result = checkTPConditions(mpp, tpData);
         if(!result.value) {
             p.sendMessage(result.expl);
         } else {
@@ -99,24 +93,30 @@ public class Teleport implements CommandExecutor {
     }
 
     // boolean + explanation why
-    public static Utils.MeetsConditions checkTPConditions(MainPluginPlayer mpp, double tpCost) {
+    public static Utils.MeetsConditions checkTPConditions(MainPluginPlayer mpp, TPData tpData) {
         if(mpp.takenDamageRecently()) {
-            return new Utils.MeetsConditions(false, "Can't teleport right after taking damage!");
+            return new Utils.MeetsConditions("Can't teleport right after taking damage!");
         }
         if(mpp.isAFK()) {
-            return new Utils.MeetsConditions(false, "Can't teleport while AFK!");
+            return new Utils.MeetsConditions( "Can't teleport while AFK!");
         }
         if(mpp.isInAir()) {
-            return new Utils.MeetsConditions(false, "Can't teleport while in the air!");
+            return new Utils.MeetsConditions("Can't teleport while in the air!");
         }
         if(mpp.badHostilesNearby()) {
-            return new Utils.MeetsConditions(false, "You can't go to bed now, there are monsters nearby!");
+            return new Utils.MeetsConditions("You can't go to bed now, there are monsters nearby!");
         }
-        if(mpp.getTotalXP() < tpCost) {
-            return new Utils.MeetsConditions(false, "Not enough XP! Required: %1$d, you have: %2$d".formatted((int) tpCost, mpp.getTotalXP()));
+        if(mpp.getTotalXP() < tpData.cost) {
+            return new Utils.MeetsConditions("Not enough XP! Required: %1$d, you have: %2$d".formatted((int) tpData.cost, mpp.getTotalXP()));
+        }
+        if(mpp.getTotalXP() == 0) {
+            return new Utils.MeetsConditions("Not enough XP!");
         }
         if(AFKAccounts.isAFKAccount(mpp.p)) {
-            return new Utils.MeetsConditions(false, "AFK accounts can't teleport.");
+            return new Utils.MeetsConditions("AFK accounts can't teleport.");
+        }
+        if(tpData.to.distance(tpData.from) <= 10) {
+            return new Utils.MeetsConditions("You are already there!");
         }
 
         return new Utils.MeetsConditions();
@@ -125,13 +125,11 @@ public class Teleport implements CommandExecutor {
     public static boolean justLuckyTeleported = false;
     public static void teleport(Player p, TPData tpData) {
         p.spawnParticle(Particle.PORTAL, p.getLocation(), 1000,1, 1, 1, 1);
-        Location l = p.getWorld().getSpawnLocation();
 
         if(tpData.isToWorldSpawn) {
             p.sendMessage(ChatColor.RED + "Your spawn location is not set in this world, so you were sent to spawn.");
         }
-
-        p.teleport(l);
+        p.teleport(tpData.to);
         p.giveExp((int) -tpData.cost);
         p.spawnParticle(Particle.PORTAL, p.getLocation(), 1000,1, 1, 1, 1);
 
