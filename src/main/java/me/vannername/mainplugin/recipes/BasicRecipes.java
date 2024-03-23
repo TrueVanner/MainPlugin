@@ -27,11 +27,18 @@ public class BasicRecipes {
             }
             Bukkit.addRecipe(saddleToLeather(i));
         }
-        Material[] woods = new Material[]{
+        Material[] logs = new Material[]{
                 Material.OAK_LOG, Material.BIRCH_LOG, Material.SPRUCE_LOG,
                 Material.JUNGLE_LOG, Material.ACACIA_LOG, Material.DARK_OAK_LOG, Material.MANGROVE_LOG,
                 Material.CHERRY_LOG, Material.CRIMSON_STEM, Material.WARPED_STEM};
+        Material[] woods = new Material[]{
+                Material.OAK_WOOD, Material.BIRCH_WOOD, Material.SPRUCE_WOOD,
+                Material.JUNGLE_WOOD, Material.ACACIA_WOOD, Material.DARK_OAK_WOOD, Material.MANGROVE_WOOD,
+                Material.CHERRY_WOOD};
 
+        for(Material log : logs) {
+            Bukkit.addRecipe(woodToChests(log));
+        }
         for(Material wood : woods) {
             Bukkit.addRecipe(woodToChests(wood));
         }
