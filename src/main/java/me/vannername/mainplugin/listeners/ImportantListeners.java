@@ -64,7 +64,7 @@ public class ImportantListeners implements Listener {
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("/gui")))
                     .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/gui"))
                     .create()
-            ), "Welcome message", plugin, 20L);
+            ), "Welcome message", 20L);
         }
     }
 

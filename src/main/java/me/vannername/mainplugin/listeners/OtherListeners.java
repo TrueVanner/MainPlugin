@@ -7,10 +7,7 @@ import me.vannername.mainplugin.utils.MainPluginPlayer;
 import me.vannername.mainplugin.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
@@ -72,7 +69,7 @@ public class OtherListeners implements Listener {
                             e.getPlayer().sendMessage(ChatColor.RED + "Your message wasn't send because the player mentioned in your pings is offline or does not exist");
                         }
                     }
-                }, "Pinging", plugin, 40L);
+                }, "Pinging", 40L);
             }
         }
     }
@@ -185,6 +182,6 @@ public class OtherListeners implements Listener {
                     Utils.sendAll(Utils.addNavLinkToComponent(res, coords, ChatColor.WHITE, "").create());
                 plugin.getLogger().log(Level.FINE, "<" + name + ChatColor.RESET + "> " + e.getMessage());
             }
-        }, "Edit player message", plugin, 20L);
+        }, "Edit player message", 20L);
     }
 }

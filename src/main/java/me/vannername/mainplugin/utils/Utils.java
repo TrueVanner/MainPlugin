@@ -115,7 +115,7 @@ public class Utils {
         else return "";
     }
     private static final ArrayList<Object> currentlyRunning = new ArrayList<>();
-    public static void onlyOnce(Runnable r, Object uniqueID, Plugin plugin, long delay) {
+    public static void onlyOnce(Runnable r, Object uniqueID, long delay) {
         if (!currentlyRunning.contains(uniqueID)) {
             currentlyRunning.add(uniqueID);
             r.run();
@@ -174,7 +174,7 @@ public class Utils {
         if(p.getWorld() == w) {
             // i need two ifs to create two separate walls of particles
             if (Math.abs(p.getLocation().getBlockX() - border) < 30) { // check of the player is close enough
-                Utils.onlyOnce(() -> p.sendMessage(ChatColor.YELLOW + "Attention: you are approaching the last loaded chunks. Loading new chunks will be much slower and will make the server run slower for all players. Proceed with caution."), 3721, plugin, 1200L);
+                Utils.onlyOnce(() -> p.sendMessage(ChatColor.YELLOW + "Attention: you are approaching the last loaded chunks. Loading new chunks will be much slower and will make the server run slower for all players. Proceed with caution."), 3721, 1200L);
                 for (int y = -2; y < 8; y++) { // create particle wall on relative y from -2 to 8
                     for (int z = -5; z <= 5; z++) { // create particle wall on relative y from -5 to 5
                         Location l = p.getLocation().add(0, y, z).getBlock().getLocation(); // get exact block location
@@ -187,7 +187,7 @@ public class Utils {
             }
 
             if (Math.abs(p.getLocation().getBlockZ() - border) < 30) {
-                Utils.onlyOnce(() -> p.sendMessage(ChatColor.YELLOW + "Attention: you are approaching the last loaded chunks. Loading new chunks will be much slower and will make the server run slower for all players. Proceed with caution."), 3721, plugin, 1200L);
+                Utils.onlyOnce(() -> p.sendMessage(ChatColor.YELLOW + "Attention: you are approaching the last loaded chunks. Loading new chunks will be much slower and will make the server run slower for all players. Proceed with caution."), 3721, 1200L);
                 for (int y = -2; y < 8; y++) {
                     for (int x = -5; x <= 5; x++) {
                         Location l = p.getLocation().add(x, y, 0).getBlock().getLocation();

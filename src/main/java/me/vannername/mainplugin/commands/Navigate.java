@@ -68,7 +68,7 @@ public class Navigate implements CommandExecutor, Listener, TabCompleter {
     public void onWorldChange(PlayerChangedWorldEvent e) {
         Utils.onlyOnce(() -> {
             Utils.getPluginPlayer(e.getPlayer()).navigating.stopNavigation();
-        }, "Stop navigation", plugin, 20L);
+        }, "Stop navigation", 20L);
     }
 
     @EventHandler

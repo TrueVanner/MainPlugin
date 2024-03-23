@@ -4,6 +4,8 @@ import me.vannername.mainplugin.MainPlugin;
 import me.vannername.mainplugin.utils.MainPluginPlayer;
 import me.vannername.mainplugin.utils.Utils;
 import org.bukkit.*;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.SculkShrieker;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -73,13 +75,13 @@ public class Teleport implements CommandExecutor {
 
     public static TPData computeTPData(Player p) {
         Location from = p.getLocation();
-        Location to = p.getWorld().getSpawnLocation();
-        boolean isToWorldSpawn = true;
+        Location to = p.getRespawnLocation();
+        boolean isToWorldSpawn = false;
         double dist;
 
-        if (from.getWorld() == to.getWorld() && p.getRespawnLocation() != null) {
-            isToWorldSpawn = false;
-            to = p.getRespawnLocation();
+        if (to == null || from.getWorld() != to.getWorld()) {
+            isToWorldSpawn = true;
+            to = p.getWorld().getSpawnLocation();
         }
 
         dist = from.distance(to);
@@ -105,6 +107,9 @@ public class Teleport implements CommandExecutor {
         }
         if(mpp.badHostilesNearby()) {
             return new Utils.MeetsConditions("You can't go to bed now, there are monsters nearby!");
+        }
+        if(mpp.hasTriggerredWarden()) {
+            return new Utils.MeetsConditions("It's already too late...");
         }
         if(mpp.getTotalXP() < tpData.cost) {
             return new Utils.MeetsConditions("Not enough XP! Required: %1$d, you have: %2$d".formatted((int) tpData.cost, mpp.getTotalXP()));

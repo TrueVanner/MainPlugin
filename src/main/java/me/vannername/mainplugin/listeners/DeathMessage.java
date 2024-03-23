@@ -36,7 +36,7 @@ public class DeathMessage implements Listener {
                     if (!res.isEmpty()) Bukkit.broadcastMessage(res);
                 }
             }
-        }, "Death message", plugin, 60L);
+        }, "Death message", 60L);
     }
 
     private String getJokeString(String dm, Player p) {

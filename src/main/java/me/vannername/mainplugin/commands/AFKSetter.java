@@ -63,6 +63,7 @@ public class AFKSetter implements CommandExecutor, TabCompleter, Listener {
                             p.sendMessage(ChatColor.RED + "The player is already AFK!");
                             return false;
                         }
+                        p.sendMessage(ChatColor.GREEN + "AFK request sent.");
                         toAFK.handleAFKRequest();
                     } else {
                         p.sendMessage(ChatColor.RED + "Usage: /afk [start/stop/*online player's name*]");
@@ -89,7 +90,7 @@ public class AFKSetter implements CommandExecutor, TabCompleter, Listener {
             if(!p.isInWater()) { // literally only to stop spamming when player unsits in water
                 Utils.onlyOnce(() -> {
                     p.sendMessage(ChatColor.ITALIC + not[(int) (Math.random() * not.length)]);
-                }, "AFK warn message", plugin, 40L);
+                }, "AFK warn message", 40L);
             }
         }
     }

@@ -27,6 +27,14 @@ public class BasicRecipes {
             }
             Bukkit.addRecipe(saddleToLeather(i));
         }
+        Material[] woods = new Material[]{
+                Material.OAK_LOG, Material.BIRCH_LOG, Material.SPRUCE_LOG,
+                Material.JUNGLE_LOG, Material.ACACIA_LOG, Material.DARK_OAK_LOG, Material.MANGROVE_LOG,
+                Material.CHERRY_LOG, Material.CRIMSON_STEM, Material.WARPED_STEM};
+
+        for(Material wood : woods) {
+            Bukkit.addRecipe(woodToChests(wood));
+        }
     }
 
     public ShapedRecipe serverChest() {
@@ -123,6 +131,15 @@ public class BasicRecipes {
             recipe.addIngredient(Material.SADDLE);
         }
 
+        return recipe;
+    }
+
+    public ShapedRecipe woodToChests(Material wood) {
+        ItemStack item = new ItemStack(Material.CHEST, 4);
+        NamespacedKey key = new NamespacedKey(plugin, "chest_from_" + wood.toString().toLowerCase());
+        ShapedRecipe recipe = new ShapedRecipe(key, item);
+        recipe.shape("WWW", "W W", "WWW");
+        recipe.setIngredient('W', wood);
         return recipe;
     }
 }

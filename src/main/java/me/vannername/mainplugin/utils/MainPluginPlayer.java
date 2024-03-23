@@ -11,10 +11,9 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.SculkShrieker;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
@@ -116,6 +115,24 @@ public class MainPluginPlayer {
             return false;
         }
     }
+    public boolean hasTriggerredWarden() {
+        Location l = p.getLocation();
+        int chunkX = l.getChunk().getX();
+        int chunkZ = l.getChunk().getZ();
+        int radius = 16;
+        for(Chunk c : l.getWorld().getLoadedChunks()) {
+            if(c.getX() > chunkX - radius && c.getX() < chunkX + radius) {
+                if(c.getZ() > chunkZ - radius && c.getZ() < chunkZ + radius) {
+                    for(BlockState bs : c.getTileEntities()) {
+                        if(bs instanceof SculkShrieker sc) {
+                            if(sc.getWarningLevel() == 4) return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     public void invertPassive() {
         if(config.contains(getConfigPath(".passive"))) {
@@ -157,23 +174,21 @@ public class MainPluginPlayer {
             if(isAFK) {
                 return new MeetsConditions("You're already AFK.");
             }
-
             if(AFKAccounts.isAFKAccount(p)) {
                 return new MeetsConditions("AFK accounts can't go AFK.");
             }
-
-            if(isInAir()) {
-                return new MeetsConditions("Can't go AFK in the air!");
-            }
-
-            if (takenDamageRecently()) {
-                return new MeetsConditions("Can't go AFK right after taking damage");
-            }
-
             if(badHostilesNearby()) {
                 return new MeetsConditions("You can't rest now, there are monsters nearby!");
             }
-
+            if(hasTriggerredWarden()) {
+                return new Utils.MeetsConditions("It's already too late...");
+            }
+            if(isInAir()) {
+                return new MeetsConditions("Can't go AFK in the air!");
+            }
+            if (takenDamageRecently()) {
+                return new MeetsConditions("Can't go AFK right after taking damage");
+            }
             return new MeetsConditions();
         }
 
